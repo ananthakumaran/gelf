@@ -5,3 +5,6 @@ config :logger,
 
 config :logger, :console,
   level: :warn
+
+config :logger, Gelf,
+  chunk_size: 100

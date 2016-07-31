@@ -2,6 +2,7 @@ defmodule Gelf do
   @moduledoc """
   """
 
+  require Logger
   use GenEvent
 
   defstruct [level: nil, host: nil, port: nil, app: nil, sock: nil, address: nil, compress: nil, metadata: nil]
@@ -111,6 +112,13 @@ defmodule Gelf do
   end
 
   @chunk_size Keyword.get(Application.get_env(:logger, __MODULE__, []), :chunk_size, 8192 - 48)
+  @part_size @chunk_size - 12
+  @max_message_size @part_size * 128
+
+  defp chunk(message) when byte_size(message) > @max_message_size do
+    Logger.warn ["Gelf: Message too large (", Integer.to_string(byte_size(message)),  " btyes). Dropping it"]
+    []
+  end
   defp chunk(message) when byte_size(message) <= @chunk_size do
     [message]
   end
@@ -118,7 +126,6 @@ defmodule Gelf do
     break(message, [])
   end
 
-  @part_size @chunk_size - 12
   defp break(<< part::binary-size(@part_size), rest::binary >> = message, parts) when byte_size(message) > @part_size do
     break(rest, [part | parts])
   end

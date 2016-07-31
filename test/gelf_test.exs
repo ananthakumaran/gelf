@@ -132,9 +132,16 @@ defmodule GelfTest do
   end
 
   test "messages in chunks" do
-    big_string = random_string(10000)
+    big_string = random_string(1000)
     Logger.info big_string
     assert_message %{"message" => ^big_string}
+  end
+
+  test "drop if the message is too big" do
+    big_string = random_string(100 * 128 + 10)
+    Logger.info big_string
+    assert_message %{"short_message" => warning}
+    assert warning =~ ~r/Message too large/i
   end
 
   @tag logger: [compress: :gzip]
