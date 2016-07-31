@@ -134,7 +134,7 @@ defmodule GelfTest do
   test "messages in chunks" do
     big_string = random_string(1000)
     Logger.info big_string
-    assert_message %{"message" => ^big_string}
+    assert_message %{"full_message" => ^big_string}
   end
 
   test "drop if the message is too big" do
@@ -160,7 +160,7 @@ defmodule GelfTest do
     spawn(fn ->
       raise "errr"
     end)
-    assert_message %{"message" => message}
+    assert_message %{"full_message" => message}
     assert message =~ ~r/errr/i
   end
 
@@ -168,7 +168,7 @@ defmodule GelfTest do
     :proc_lib.spawn(fn ->
       1/0
     end)
-    assert_message %{"message" => message}
+    assert_message %{"full_message" => message}
     assert message =~ ~r/arithmetic/i
   end
 

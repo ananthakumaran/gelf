@@ -81,7 +81,7 @@ defmodule Gelf do
       "short_message": String.slice(utf_message, 0..79),
     }, md)
     msg = if byte_size(utf_message) > 80 do
-      Map.put(msg, "message", utf_message)
+      Map.put(msg, "full_message", utf_message)
     else
       msg
     end
@@ -89,9 +89,12 @@ defmodule Gelf do
   end
 
   defp filter_metadata(md, %{metadata: allowed}) do
-    Enum.filter_map(md, fn {k, _v} -> k in allowed end, fn {k, v} -> {"_" <> to_string(k), v} end)
+    Enum.filter_map(md, fn {k, _v} -> k in allowed end, fn {k, v} -> {"_" <> to_string(k), to_number_or_string(v)} end)
     |> Enum.into(%{})
   end
+
+  defp to_number_or_string(x) when is_integer(x) or is_float(x), do: x
+  defp to_number_or_string(x), do: to_string(x)
 
   defp compress(data, :zlib), do: :zlib.compress(data)
   defp compress(data, :gzip), do: :zlib.gzip(data)
