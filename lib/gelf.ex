@@ -94,7 +94,7 @@ defmodule Gelf do
 
   defp compress(data, :zlib), do: :zlib.compress(data)
   defp compress(data, :gzip), do: :zlib.gzip(data)
-  defp compress(data, :none), do: data
+  defp compress(data, :none), do: IO.iodata_to_binary(data)
 
   defp level_number(:debug), do: 7
   defp level_number(:info), do: 6
