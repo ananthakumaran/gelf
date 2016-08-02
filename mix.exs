@@ -5,6 +5,7 @@ defmodule Gelf.Mixfile do
 
   def project do
     [app: :gelf,
+     description: "GELF Logger Backend",
      version: @version,
      elixir: "~> 1.3",
      build_embedded: Mix.env == :prod,
