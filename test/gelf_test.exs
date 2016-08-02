@@ -1,7 +1,7 @@
 defmodule UDPServer do
   use GenServer
 
-  def start_link() do
+  def start() do
     GenServer.start(__MODULE__, [], name: __MODULE__)
   end
 
@@ -96,7 +96,7 @@ defmodule GelfTest do
     else
       Logger.configure_backend(Gelf, [])
     end
-    {:ok, _} = UDPServer.start_link
+    {:ok, _} = UDPServer.start
     on_exit fn ->
       UDPServer.stop
     end
